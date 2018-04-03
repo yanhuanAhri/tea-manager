@@ -1,0 +1,54 @@
+		<div class="modal-content">
+			<div class="modal-header ng-scope">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h3 class="modal-title" id="modal-title">图片管理</h3>
+			</div>
+			<div class="modal-body ng-scope" id="modal-body">
+
+
+				<div class="box-body">
+
+	<div class="imgsright margin-tb10">
+		<div class="panel panel-default">
+		<div class="panel-heading">
+			<button  ng-click="okselect()" class="btn btn-danger">上传</button>
+			<select class="form-control" style="width:200px;float:left;" ng-model="type"
+								ng-change="cateChange(type)"	ng-options="c.type for c in typeData"
+									></select>
+		</div>
+		<div class="panel-body">
+
+				
+			    <div class="reaimgslist" ng-repeat="i in coverlist" ng-show="active == 'cover'">
+			        <div class="thumbnail">
+			            <img ng-src="{{i.path}}" id="imgsid"
+			                 alt="通用的占位符缩略图" >
+			            <i class="fa fa-check"></i>
+			        </div>
+			        
+			    </div>
+			    
+			     <div class="reaimgslist" ng-repeat="i in detaillist" ng-show="active == 'detail'">
+			        <div class="thumbnail">
+			            <img ng-src="{{i.path}}" id="imgsid"
+			                 alt="通用的占位符缩略图" >
+			            <i class="fa fa-check"></i>
+			        </div>
+			        
+			    </div>
+			    
+			     <div class="reaimgslist" ng-repeat="i in particularlist" ng-show="active == 'particular'">
+			        <div class="thumbnail">
+			            <img ng-src="{{i.path}}" id="imgsid"
+			                 alt="通用的占位符缩略图" >
+			            <i class="fa fa-check"></i>
+			        </div>
+			        
+			    </div>
+		</div>
+	</div>
+	</div>
+</div>
+<div class="clearfix"></div>

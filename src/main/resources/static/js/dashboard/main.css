@@ -1,0 +1,88 @@
+@CHARSET "UTF-8";
+.index-home {
+    background: #F2F2F2;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.machine-total {
+    height: 50px;
+    line-height: 50px;
+    border-bottom: 1px solid #DDDDDD;
+    padding: 0;
+    margin: 0;
+}
+.machine-total b {
+    padding-left: 16px;
+    font-size: 16px;
+}
+
+.canon-tab {
+    background: #F2F2F2;
+    height: 50px;
+    line-height: 50px;
+}
+.canon-tab a {
+    font-weight: bold;
+    padding: 0 20px;
+    color: #000000;
+}
+.canon-tab a.canon-tab-active {
+    background: #3C8DBC;
+    display: inline-block;
+    color: #ffffff;
+}
+
+.index-search {
+    margin-top: 10px;
+}
+
+.ui-grid-row-footer {
+    position: fixed;
+    bottom: 0px; /*bottom: 70px;*/
+    background: #D4D4D4;
+}
+.grid-publicNumber-dashboard,
+.grid-device-dashboard {
+    margin-top: 10px;
+}
+
+.grid-publicNumber-dashboard .ui-grid-viewport,
+.grid-device-dashboard .ui-grid-viewport {
+    padding-bottom: 0px;  /*padding-bottom: 90px;*/
+}
+
+
+.machine-total-content {
+    padding: 10px 0;
+
+}
+.machine-total-content .col-md-2 {
+    padding-left: 0;
+}
+
+/* 图表 */
+.subscribe-number {
+    margin-top: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.subscribe-number > div {
+    padding-bottom: 20px;
+}
+@media (min-width: 350px) {
+    .public-number,
+    .device  {
+        height: 820px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .public-number,
+    .device {
+        height: 410px;
+    }
+}

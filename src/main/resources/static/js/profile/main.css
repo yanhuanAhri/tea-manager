@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+.inputprofile{width:100%;float:left; text-align:center;}
+.inputprofile img{width:40%; margin: 0 30% 30px;border-radius: 50%;float:left;}
+.inputprofile label{line-height:34px; font-weight:400;  padding:0 10px 0 0; font-size:15px; margin:0;float:left;width:15%;}
+.inputprofile a{margin:20px 0;}
+.inputprofile .input-group{margin:7px 0;}
+.profiles{width:85%;float:left; height:34px;margin:7px 0;}
+.profiles input{ padding-left:30px;}
+.profiles{position:relative;}
+.profiles span{position:absolute; top:10px; left:10px; color:#777;}
+.form-horizontal .inputprofile{margin:0;}
+.inputprofile .errordiv{margin-left:114px;text-align:left; color:red}

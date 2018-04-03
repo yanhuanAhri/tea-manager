@@ -1,0 +1,10 @@
+<div>
+	<div class="row">
+		<div class="col-md-5">
+			<a class="btn btn-default margin-trb" href="#/param/create" ng-click="openAddWin()"><i class="fa fa-fw fa-user-plus"></i>创建参数</a>
+			<a class="btn btn-default margin-trb" href="#/param/snydata" ng-click="snydata()" has-perm="PARAM_SYNCH">同步数据到Redis</a>
+			<a class="btn btn-default margin-trb" href="#/param/showOrHideFilter" ng-click="toggleFiltering()"><i class="fa"></i>{{showOrHide}}</a>
+ 	 	</div>
+ 	 </div>
+	<div ui-grid="gridOptions" class="grid paramgrid" ui-grid-move-columns ui-grid-selection ui-grid-auto-resize ui-grid-pagination></div>
+</div>

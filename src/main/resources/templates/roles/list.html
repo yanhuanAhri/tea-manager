@@ -1,0 +1,9 @@
+<div>
+	<div class="row">
+		<div class="col-md-4">
+			<a class="btn btn-default margin-trb" href="#/roles/create" ng-click="openAddWin()"><i class="fa fa-fw fa-user-plus"></i>创建角色</a>
+			<a class="btn btn-default margin-trb" href="#/roles/showOrHideFilter" ng-click="toggleFiltering()"><i class="fa"></i>{{showOrHide}}</a>
+ 	 	</div>
+ 	 </div>
+	<div ui-grid="gridOptions" class="grid rolesgrid" ui-grid-move-columns ui-grid-selection ui-grid-auto-resize ui-grid-pagination></div>
+</div>

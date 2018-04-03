@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="js/profile/main.css"></link>
+
+<div class="modal-dialog ">
+	<form class="form-horizontal" name="myForm" novalidate role="form">
+		<div class="modal-content" style="box-shadow: none;">
+			<div class="modal-header ng-scope">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h3 class="modal-title" id="modal-title">修改密码</h3>
+			</div>
+			<div class="modal-body ng-scope" id="modal-body">
+				<div class="box-body">
+					
+					<div class="form-group inputprofile">
+						<label for="password" class="col-sm-2 control-label">原密码</label>
+						<div class="col-sm-10 input-group">
+							<div class="input-group-addon">
+								<i class="fa fa-unlock"></i>
+							</div>
+							<input type="password" class="form-control" id="password"
+								name="password" placeholder="密码必填" ng-model="password"
+								ng-pattern="/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/"
+								ng-minlength="6" ng-maxlength="20" required />
+						</div>
+						<div  class="col-sm-10 errordiv" ng-messages="myForm.password.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">原密码必填</p>
+								<p class="error" ng-message="minlength">最小长度为6个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">必须是字母数字组合</p>
+							</div>
+					</div>
+
+					<div class="form-group inputprofile">
+						<label for="newPassword" class="col-sm-2 control-label">新密码</label>
+						<div class="col-sm-10 input-group">
+							<div class="input-group-addon">
+								<i class="fa fa-lock"></i>
+							</div>
+							<input type="password" class="form-control" id="newPassword"
+								name="newPassword" placeholder="新密码必填" ng-model="newPassword"
+								ng-pattern="/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/"
+								ng-minlength="6" ng-maxlength="20" required />
+						</div>
+						<div  class="col-sm-10 errordiv" ng-messages="myForm.newPassword.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">新密码必填</p>
+								<p class="error" ng-message="minlength">最小长度为6个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">必须是字母数字组合</p>
+							</div>
+					</div>
+
+					<div class="form-group inputprofile">
+						<label for="confirmPwd" " class="col-sm-2 control-label">确认密码</label>
+						<div class="col-sm-10 input-group">
+							<div class="input-group-addon">
+								<i class="fa fa-lock"></i>
+							</div>
+							<input type="password" class="form-control" id="confirmPwd"
+								name="confirmPwd"
+								placeholder="确认密码必填"
+								ng-model="confirmPwd"
+								ng-pattern="/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/"
+								ng-minlength="6" ng-maxlength="20" required />
+						</div>
+						<div class="col-sm-10 errordiv" ng-messages="myForm.confirmPwd.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">确认密码必填</p>
+								<p class="error" ng-message="minlength">最小长度为6个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">必须是字母数字组合</p>
+								<p class="error" ng-show="newPassword!=confirmPwd">两次密码不一致</p>
+							</div>
+					</div>
+					<div class="form-group inputprofile">
+						<a href="#/updateProfile" ng-click="update()" class="btn btn-success">更新密码</a>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

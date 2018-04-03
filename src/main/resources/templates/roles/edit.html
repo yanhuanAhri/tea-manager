@@ -1,0 +1,69 @@
+<div class="modal-dialog ">
+	<form class="form-horizontal" name="myForm" novalidate role="form"
+		ng-submit="updateRole()">
+		<div class="modal-content">
+			<div class="modal-header ng-scope">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h3 class="modal-title" id="modal-title">编辑角色</h3>
+			</div>
+			<div class="modal-body ng-scope" id="modal-body">
+
+				<div class="box-body">
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label">名称</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="name" name="name"
+								placeholder="角色名称必填" ng-model="name"
+								ng-pattern="/[\W]|[^\u4E00-\u9FA5]/"
+								ng-minlength="2" ng-maxlength="20" required />
+							<div style="color: red" ng-messages="myForm.name.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">角色名称必填</p>
+								<p class="error" ng-message="minlength">最小长度为2个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">必须为字母或者中文</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="code" class="col-sm-2 control-label">编码</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="code" name="code"
+								placeholder="角色编码必填" ng-model="code"
+								ng-pattern="/^[A-Za-z]+$/"
+								ng-minlength="2" ng-maxlength="20" required />
+							<div style="color: red" ng-messages="myForm.code.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">角色名称必填</p>
+								<p class="error" ng-message="minlength">最小长度为2个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">必须为字母</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="description" class="col-sm-2 control-label">描述</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="description" name="description"
+								placeholder="描述必填" ng-model="description"
+								ng-pattern="/[\W]|[^\u4E00-\u9FA5]/"
+								ng-minlength="2" ng-maxlength="50" required />
+							<div style="color: red" ng-messages="myForm.description.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">描述必填</p>
+								<p class="error" ng-message="minlength">最小长度为2个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为50个字符</p>
+								<p class="error" ng-message="pattern">必须为字母或者中文</p>
+							</div>
+						</div>
+					</div>
+			</div>
+			<div class="modal-footer ng-scope">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="cancel()">取消</button>
+                <button type="submit" class="btn btn-primary" ng-disabled="myForm.$invalid">保存</button>
+			</div>
+		</div>
+	</form>
+</div>

@@ -1,0 +1,110 @@
+<div class="modal-dialog ">
+	<form class="form-horizontal" name="myForm" novalidate role="form"
+		ng-submit="add()">
+		<div class="modal-content">
+			<div class="modal-header ng-scope">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h3 class="modal-title" id="modal-title">{{title}}</h3>
+			</div>
+			<div class="modal-body ng-scope" id="modal-body">
+
+				<div class="box-body">
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label">名称</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="name" name="name"
+								placeholder="名称必填" ng-model="name"
+								ng-pattern="/[\W]|[^\u4E00-\u9FA5]/"
+								ng-minlength="2" ng-maxlength="20" required />
+							<div style="color: red" ng-messages="myForm.name.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">名称必填</p>
+								<p class="error" ng-message="minlength">最小长度为2个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">必须为字母或者中文</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="typeSelect" class="col-sm-2 control-label">类型</label>
+						<div class="col-sm-10">
+							<select name="typeSelect" id="typeSelect" ng-model="data.model" ng-change="changeType()">
+						      <option ng-repeat="option in data.availableOptions" value="{{option.value}}">{{option.name}}</option>
+						    </select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="url" class="col-sm-2 control-label">URL</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="url" name="url"
+								placeholder="URL必填" ng-model="url"
+								ng-minlength="2" ng-maxlength="200" />
+							<div style="color: red" ng-messages="myForm.url.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="minlength">最小长度为2个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为200个字符</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="method" class="col-sm-2 control-label">HTTP方法</label>
+						<div class="col-sm-10">
+							<select name="method" id="method" ng-model="method.model">
+						      <option ng-repeat="option in method.availableOptions" value="{{option.value}}">{{option.name}}</option>
+						    </select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="code" class="col-sm-2 control-label">编码</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="code" name="code"
+								placeholder="编码必填" ng-model="code"
+								ng-pattern="/[A-Za-z]+$/"
+								ng-minlength="2" ng-maxlength="50" required />
+							<div style="color: red" ng-messages="myForm.code.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">编码必填</p>
+								<p class="error" ng-message="pattern">必须为字母</p>
+								<p class="error" ng-message="minlength">最小长度为2个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为50个字符</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="icon" class="col-sm-2 control-label">图标</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="icon" name="icon"
+								placeholder="图标" ng-model="icon"
+								ng-pattern="/[A-Za-z0-9-A-Za-z0-9]+$/"
+								ng-minlength="2" ng-maxlength="40"/>
+							<div style="color: red" ng-messages="myForm.icon.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="pattern">为字母或者数字及连接线</p>
+								<p class="error" ng-message="minlength">最小长度为2个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为40个字符</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="description" class="col-sm-2 control-label">排序</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="sortby" name="sortby"
+								placeholder="排序必填" ng-model="sortby"
+								ng-pattern="/^[1-9]\d*|0$/" required />
+							<div style="color: red" ng-messages="myForm.sortby.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">排序必填</p>
+								<p class="error" ng-message="pattern">必须为正整数</p>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+		<div class="modal-footer ng-scope">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="cancel()">取消</button>
+                <button type="submit" class="btn btn-primary" ng-disabled="myForm.$invalid">保存</button>
+			</div>
+	</form>
+</div>

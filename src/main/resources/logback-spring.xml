@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property name="PATTERN"
+		value="%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+	<property name="LOG_FILE_PATH"
+		value="/home/eagle/eagle-manager/log" />
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="LOG-FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_FILE_PATH}/mzj-manager.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_FILE_PATH}/mzj-manager.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<MaxHistory>2</MaxHistory>
+		</rollingPolicy>
+
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>${PATTERN}</pattern>
+		</layout>
+	</appender>
+
+	<root level="info">
+		<appender-ref ref="console" />
+		<appender-ref ref="LOG-FILE" />
+	</root>
+
+</configuration>

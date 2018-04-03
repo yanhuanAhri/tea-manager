@@ -1,0 +1,146 @@
+<div class="modal-dialog ">
+	<form class="form-horizontal" name="myForm" novalidate role="form"
+		ng-submit="addUser()">
+		<div class="modal-content">
+			<div class="modal-header ng-scope">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h3 class="modal-title" id="modal-title">创建用户</h3>
+			</div>
+			<div class="modal-body ng-scope" id="modal-body">
+
+
+				<div class="box-body">
+					<div class="form-group">
+						<label for="loginName" class="col-sm-2 control-label">登录名</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="loginName" name="loginName"
+								placeholder="登录名必填" ng-model="loginName"
+								ng-pattern="/^[0-9a-zA-Z]*$/"
+								ng-minlength="4" ng-maxlength="20" required />
+							<div style="color: red" ng-messages="myForm.loginName.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">登录名必填</p>
+								<p class="error" ng-message="minlength">最小长度为4个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">必须为字母或者数字</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label">姓名</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="name" name="name"
+								placeholder="姓名必填" ng-model="name"
+								ng-pattern="/[\W]|[^\u4E00-\u9FA5]/"
+								ng-minlength="2" ng-maxlength="20" required />
+							<div style="color: red" ng-messages="myForm.name.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">姓名必填</p>
+								<p class="error" ng-message="minlength">最小长度为2个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">必须为字母或者中文</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="email" class="col-sm-2 control-label">E-mail</label>
+						<div class="col-sm-10">
+							<input type="email" class="form-control" id="email" name="email"
+								placeholder="E-mail必填" ng-model="email"
+								ng-pattern="/^(?:\w+\.?)*\w+@(?:\w+\.)+\w+$/"
+								ng-minlength="5" ng-maxlength="100" required />
+							<div style="color: red" ng-messages="myForm.email.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">E-mail必填</p>
+								<p class="error" ng-message="minlength">最小长度为5个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为100个字符</p>
+								<p class="error" ng-message="pattern">格式不正确</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="mobile" class="col-sm-2 control-label">联系电话</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="mobile" name="mobile"
+								placeholder="联系电话必填" ng-model="mobile"
+								ng-pattern="/1[345678]\d{9}$|(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/"
+								ng-minlength="6" ng-maxlength="20" required />
+							<div style="color: red" ng-messages="myForm.mobile.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">联系电话必填</p>
+								<p class="error" ng-message="minlength">最小长度为6个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">格式不匹配</p>
+							</div>
+						</div>
+					</div>
+				
+					<div class="form-group">
+						<label for="password" class="col-sm-2 control-label">密码</label>
+						<div class="col-sm-10">
+							<input type="password" class="form-control" id="password" name="password"
+								placeholder="密码必填" ng-model="password"
+								ng-pattern="/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,10}$/"
+								ng-minlength="6" ng-maxlength="20" required />
+							<div style="color: red" ng-messages="myForm.password.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">密码必填</p>
+								<p class="error" ng-message="minlength">最小长度为6个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">必须为字母或者数字</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="confirmPwd" class="col-sm-2 control-label">确认密码</label>
+
+						<div class="col-sm-10">
+							<input type="password" id="confirmPwd" name="confirmPwd" placeholder="确认密码必填"
+								class="form-control" ng-model="confirmPwd"
+								ng-pattern="/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,10}$/"
+								ng-minlength="6" ng-maxlength="20" required>
+							<div style="color: red" ng-messages="myForm.confirmPwd.$error"
+								ng-messages-multiple>
+								<p class="error" ng-message="required">确认密码必填</p>
+								<p class="error" ng-message="minlength">最小长度为6个字符</p>
+								<p class="error" ng-message="maxlength">最大长度为20个字符</p>
+								<p class="error" ng-message="pattern">必须为字母或者数字</p>
+								<p class="error" ng-show="password!=confirmPwd">两次密码不一致</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="confirmPwd" class="col-sm-2 control-label">设置状态</label>
+						<div class="col-sm-10">
+							<div toggle-switch class="switch-mini switch-success" ng-init="switchUserStatus = 1" ng-model="switchUserStatus" on-label="激活" off-label="禁用"></div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">所属机构</label>
+						<div class="col-sm-10">
+							<select class="form-control" id="orgId" name="orgId" ng-model="orgId" ng-options="v.id as v.name for v in orgData">
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">角色</label>
+						<div class="col-sm-10">
+							<div class="checkbox fdisplay" ng-repeat="r in roles">
+								<label> <input
+									type="checkbox" name="brand-suppliers-list1" class="minimal" value="{{r.id}}"> {{r.name}}
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer ng-scope">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="cancel()">取消</button>
+                <button type="submit" class="btn btn-primary" 
+                	ng-disabled="myForm.$invalid">保存</button>
+			</div>
+		</div>
+	</form>
+</div>

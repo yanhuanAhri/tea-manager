@@ -1,0 +1,37 @@
+<div style="padding: 20px;">
+	<input type="text" style="display: none;" id="type" ng-model="types" />
+	<input id="input-dim-1" name="inputdim1[]" type="file" multiple
+		class="file-loading" accept="image/*">
+</div>
+<script>
+	$(function() {
+		var controllerScope = $('#input-dim-1').scope();
+		$("#input-dim-1").fileinput({
+			dropZoneTitle : "图片上传",
+			uploadUrl : "/publish/upload?type="+type,
+			deleteUrl : "",
+			allowedFileExtensions : [ "jpg", "gif","png","jpeg" ],
+			maxFileCount : 2,
+			showRemove : false,
+			showUpload : true,
+			showCancel : false,
+			showClose : false,
+			maxFileSize : 5120,
+			msgFilesTooMany : "选择上传的文件数量，超过允许的最大值！",
+			uploadExtraData: function(previewId, index) {   //额外参数的关键点
+                 var obj = {};
+                 obj.type =  $('#type').val()
+                 return obj;
+             }
+		}).on("fileuploaded", function(event, outData, previewId, ids,$thumb) {
+			var res = outData.response.res;
+			if (res == 0) {
+				toastr["warning"](outData.response.msg);
+			} else {
+				controllerScope.upload(outData);
+			}
+		}).on("filesuccessremove", function(event, id, previewId, index) {
+			controllerScope.delelteImg(id);
+		});
+	});
+</script>

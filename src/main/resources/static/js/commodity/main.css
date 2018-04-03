@@ -1,0 +1,88 @@
+@CHARSET "UTF-8";
+/* 我的商家 */
+.myshop-modal .modal-dialog {
+    max-width: 680px;
+}
+.see-img {
+    text-align: center;
+}
+.see-img img {
+    width: 100%;
+    height: 100%;
+}
+
+.see-img img{
+    width: 100%;
+    height: auto;
+}
+.tags-tip {
+    padding-top: 10px; color: #cccccc;
+}
+.img-box .col-sm-9 {
+    position: relative;
+}
+.img-box .col-sm-9 .img-del {
+    position: absolute;
+    z-index: 9999;
+    top: 6px;
+    border-radius: 50%;
+    left: 136px;
+    border: 1px solid #CCCCCC;
+    color: red;
+    padding: 4px 5px;
+    cursor: pointer;
+    display: none;
+}
+
+/* 商家资料上传 */
+.businessin-data {
+    padding-top: 15px;
+}
+
+.businessin-data .logo img {
+    border: 1px solid #D2D6DE;
+    max-width: 150px;
+    max-height: 150px;
+}
+
+.businessin-data .real-map {
+    height: 100%;
+}
+.businessin-data .real-map img {
+    border: 1px solid #D2D6DE;
+    max-width: 150px;
+    max-height: 150px;
+}
+
+.img-box .col-sm-9 {
+    position: relative;
+}
+.img-box .col-sm-9 .img-del {
+    position: absolute;
+    z-index: 9999;
+    top: 6px;
+    border-radius: 50%;
+    left: 136px;
+    border: 1px solid #CCCCCC;
+    color: red;
+    padding: 4px 5px;
+    cursor: pointer;
+    display: none;
+}
+
+@media screen and (min-width: 768px) {
+    .myshop-modal-add .modal-dialog {
+        width: 850px;
+    }
+    .tags-tip {
+        display: block;
+    }
+}
+@media screen and (max-width: 750px) {
+    .businessin-data .real-map img {
+        margin-top: 15px;
+    }
+    .tags-tip {
+        display: none;
+    }
+}

@@ -1,0 +1,23 @@
+<form class="form-horizontal" name="myForm" novalidate role="form"
+		ng-submit="addRolesPermission()">
+		<div class="modal-content">
+			<div class="modal-header ng-scope">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h3 class="modal-title" id="modal-title">角色授权</h3>
+			</div>
+			<div class="modal-body role-dele">
+				<div class="row">
+					<div class="col-md-2 margin-trb">
+						<button type="submit" class="btn btn-primary"><i class="fa fa-circle-o-notch icon-loading" ng-hide="loading"></i>保存</button>
+					</div>
+				</div>
+				<div id="grid1" ui-grid="gridOptions" ui-grid-tree-view
+					ui-grid-selection class="grid"></div>
+			</div>
+		</div>
+</form>
+<style>
+.role-dele .grid{height:750px;}
+</style>
