@@ -115,6 +115,29 @@ public class PublishController {
 			LOG.error(e.getMessage(), e);
 		}
 	}
-
+	
+	
+	
+	
+	
+	
+	/**
+	 * 删除图片
+	 * @param path
+	 * @param type
+	 * @param model
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value = "publish/imgs", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteImgs(String path,String type,Model model, HttpServletRequest request, HttpServletResponse response){
+		try {
+			commodityService.deleteImg(path,type);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+    
 	
 }

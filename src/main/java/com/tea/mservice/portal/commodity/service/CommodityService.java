@@ -36,6 +36,8 @@ import com.tea.mservice.portal.commodity.util.SerialUtil;
 import com.tea.mservice.portal.commodity.vo.CommodityVo;
 import com.tea.mservice.portal.entity.Commodity;
 import com.tea.mservice.portal.entity.CommodityImg;
+import com.tea.mservice.portal.entity.Recommend;
+import com.tea.mservice.portal.recommend.repository.RecommendRepository;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -57,11 +59,15 @@ public class CommodityService {
     private CommodityRepository commodityRepository;
     
     @Autowired
+    private RecommendRepository recommendRepository;
+    
+    @Autowired
     private CommodityImgRepository commodityImgRepository;
     
     private final String COVER = "cover";
     private final String DETAIL = "detail";
     private final String PARTICULAR = "particular";
+    private final String HOME="home";
     
     //封面路径
     private final static String COVER_PATH = "/cover/";   
@@ -69,7 +75,8 @@ public class CommodityService {
     private final static String DETAIL_PATH = "/detail/";  
     //详情
     private final static String PARTICULAR_PATH = "/particular/";  
-    
+    //首页图
+    private final static String HOME_PATH = "/home/";
     
     
     public Map<String,Object> page(Integer pageNumber,Integer pageSize,String filter){
@@ -120,7 +127,7 @@ public class CommodityService {
 			args.add(pageSize);
 			args.add(pageNumber * pageSize);
 	    	
-			
+			//集合
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(sql+ where,args.toArray());
 	    	
 	    	
@@ -136,7 +143,9 @@ public class CommodityService {
     }
     
 	/**
-	 * 更新商品
+	 * 商品更新
+	 * @param id 商品ID
+	 * @param commodityJson 商品数据
 	 */
 	public void edit(Long id,String commodityJson) {
 		
@@ -146,9 +155,9 @@ public class CommodityService {
 		
 		Commodity cy = commodityRepository.findOne(id);
 		
-    	cy.setStatus(1);
+    	cy.setStatus(1);//上架
     	if(jsonObject.getString("type").equals("draft")){
-    		cy.setStatus(0);
+    		cy.setStatus(0);//未上架
     	}
 		
     	ShiroUser user = ShiroUserUtil.getUser();
@@ -188,31 +197,55 @@ public class CommodityService {
     	CommodityImg img =  null;
     	
     	
-    	String listSql = "select path FROM `commodity_img` where commodity_num  = ? and type =";
     	String sql = "delete FROM `commodity_img` where commodity_num  = '"+cy.getCommodityNum()+"' and type =";
     	
+    	//获取图片集合
+    	JSONArray homeArray = JSONArray.fromObject(jsonObject.getString("home"));
     	JSONArray coverArray = JSONArray.fromObject(jsonObject.getString("cover"));
     	JSONArray detailArray = JSONArray.fromObject(jsonObject.getString("detail"));
     	JSONArray particularArray = JSONArray.fromObject(jsonObject.getString("particular"));
+    	
+    	for(int i = 0;i<homeArray.size();i++){
+    		Object coverObj = homeArray.get(i);
+    		jsonObject = JSONObject.fromObject(coverObj);
+    		
+    		//是原图，不处理,跳过
+    		if(jsonObject.getString("path").indexOf("http")>-1){
+    			break;
+    		}
+    		
+    		
+    		if(i == 0){
+    			//删除之前的图片数据
+    			jdbcTemplate.execute(sql+10);
+    		}
+    		
+    		
+    		
+    		String path = saveImg(jsonObject.getString("path"),"home",jsonObject.getString("name"));
+    		img = new CommodityImg();
+    		img.setCommodityId(cy.getId());
+    		img.setCommodityNum(cy.getCommodityNum());
+    		img.setType(10);
+    		img.setPath(path);
+    		img.setCreateTime(date);
+    		img.setCreateUserId(user.id);
+    		commodityImgRepository.save(img);
+    		
+    	}
+    	
     	
     	for(int i = 0;i<coverArray.size();i++){
     		Object coverObj = coverArray.get(i);
     		jsonObject = JSONObject.fromObject(coverObj);
     		
-    		//是否是新图片上传
+    		//是原图，不处理,跳过
     		if(jsonObject.getString("path").indexOf("http")>-1){
     			break;
     		}
     		
     		if(i == 0){
-    			//删除图片及数据
-    			List<Map<String,Object>> list = jdbcTemplate.queryForList(listSql,new Object[]{cy.getCommodityNum(),1});
-    			
-    			list.stream().forEach(map -> {
-    				deleteImg(map.get("path").toString());
-    			});
-    			
-    			
+    			//删除之前的图片数据
     			jdbcTemplate.execute(sql+1);
     		}
     		
@@ -236,18 +269,13 @@ public class CommodityService {
     		Object coverObj = detailArray.get(i);
     		jsonObject = JSONObject.fromObject(coverObj);
     		
+    		
     		if(jsonObject.getString("path").indexOf("http")>-1){
-    			break;
+    			continue;
     		}
     		
     		if(i == 0){
-    			
-    			//删除图片及数据
-    			List<Map<String,Object>> list = jdbcTemplate.queryForList(listSql,new Object[]{cy.getCommodityNum(),2});
-    			
-    			list.stream().forEach(map -> {
-    				deleteImg(map.get("path").toString());
-    			});
+    			//删除之前的图片数据
     			jdbcTemplate.equals(sql+2);
     		}
     		
@@ -268,18 +296,10 @@ public class CommodityService {
     		jsonObject = JSONObject.fromObject(coverObj);
 
     		if(jsonObject.getString("path").indexOf("http")>-1){
-    			break;
+    			continue;
     		}
     		
     		if(i == 0){
-    			//删除图片及数据
-    			List<Map<String,Object>> list = jdbcTemplate.queryForList(listSql,new Object[]{cy.getCommodityNum(),3});
-    			
-    			list.stream().forEach(map -> {
-    				deleteImg(map.get("path").toString());
-    			});
-    			
-    			
     			jdbcTemplate.equals(sql+3);
     		}
     		String path = saveImg(jsonObject.getString("path"),"particular",jsonObject.getString("name"));
@@ -303,8 +323,8 @@ public class CommodityService {
 	
 	/**
 	 * 上下架操作
-	 * @param type
-	 * @param commodityId
+	 * @param type 
+	 * @param commodityId 商品Id
 	 */
 	public void operation(String type,Long commodityId) {
 		
@@ -333,25 +353,30 @@ public class CommodityService {
 	
 	/**
 	 * 详情
-	 * @param id
+	 * @param 商品id
 	 * @return
 	 */
 	public Map<String,Object> detail(Long commodityId){
 		
 		Map<String,Object> map = new HashMap<>();
+		//商品详情
 		Commodity commodity = commodityRepository.findOne(commodityId);
 		
 		String sql = "SELECT path FROM `commodity_img` where commodity_num  = ? and type = ?";
 		
 		String commodityNum = commodity.getCommodityNum();
+		
+		//商品图片集合
 		List<Map<String,Object>> coverList = jdbcTemplate.queryForList(sql, new Object[]{commodityNum,1});
 		List<Map<String,Object>> detailList =jdbcTemplate.queryForList(sql, new Object[]{commodityNum,2});
 		List<Map<String,Object>> particularList =jdbcTemplate.queryForList(sql, new Object[]{commodityNum,3});
+		List<Map<String,Object>> homeList =jdbcTemplate.queryForList(sql, new Object[]{commodityNum,10});
 		
 		map.put("data", commodity);
 		map.put("cover", coverList);
 		map.put("detail", detailList);
 		map.put("particular", particularList);
+		map.put("home", homeList);
 		
 		return map;
 	}
@@ -361,16 +386,17 @@ public class CommodityService {
  
     
     /**
-     * 保存
+     * 保存商品
+     * @param commodity
      */
     public void saveCommodityController(String commodity){
     	
     	JSONObject jsonObject=JSONObject.fromObject(commodity);
     	
     	Commodity cy = new Commodity();
-    	cy.setStatus(1);
+    	cy.setStatus(1);//下架
     	if(jsonObject.getString("type").equals("draft")){
-    		cy.setStatus(0);
+    		cy.setStatus(0);//未上架
     	}
     	ShiroUser user = ShiroUserUtil.getUser();
     	cy.setCommodityNum(SerialUtil.generateOrderSerial("MF"));
@@ -381,9 +407,8 @@ public class CommodityService {
     	cy.setGoodsGrade(jsonObject.getString("goodsGrade"));
     	cy.setNetContent(Integer.parseInt(jsonObject.getString("netContent")));
     	cy.setPurpose(Integer.parseInt(jsonObject.getString("purpose")));
-    	String tradeName = " 【"+jsonObject.getString("tradeName")+ "】"+cy.getTeaName()+" "+cy.getPickYear()+" "+ cy.getPickSeason() +
+    	String tradeName = " 【"+cy.getTradeName() + "】"+cy.getTeaName()+" "+cy.getPickYear()+" "+ cy.getPickSeason() +
     			cy.getProductType() + " " + cy.getGoodsGrade() +" "+cy.getNetContent() +"克"+ (cy.getPurpose()==1?"自饮":"礼盒");
-    	
     	cy.setTradeName(jsonObject.getString("tradeName"));
     	cy.setSearch(tradeName);
     	
@@ -409,10 +434,29 @@ public class CommodityService {
     	
     	CommodityImg img =  null;
     	
+    	//图片合集
+    	JSONArray homeArray = JSONArray.fromObject(jsonObject.getString("home"));
     	JSONArray coverArray = JSONArray.fromObject(jsonObject.getString("cover"));
     	JSONArray detailArray = JSONArray.fromObject(jsonObject.getString("detail"));
     	JSONArray particularArray = JSONArray.fromObject(jsonObject.getString("particular"));
     	
+    	//保存首页图片
+    	for(int i = 0;i<homeArray.size();i++){
+    		Object coverObj = homeArray.get(i);
+    		jsonObject = JSONObject.fromObject(coverObj);
+    		String path = saveImg(jsonObject.getString("path"),"home",jsonObject.getString("name"));
+    		img = new CommodityImg();
+    		img.setCommodityId(cy.getId());
+    		img.setCommodityNum(cy.getCommodityNum());
+    		img.setType(10);
+    		img.setPath(path);
+    		img.setCreateTime(date);
+    		img.setCreateUserId(user.id);
+    		commodityImgRepository.save(img);
+    		
+    	}
+    	
+    	//保存封面图
     	for(int i = 0;i<coverArray.size();i++){
     		Object coverObj = coverArray.get(i);
     		jsonObject = JSONObject.fromObject(coverObj);
@@ -427,7 +471,7 @@ public class CommodityService {
     		commodityImgRepository.save(img);
     		
     	}
-    	
+    	//保存详情图
     	for(int i = 0;i<detailArray.size();i++){
     		Object coverObj = detailArray.get(i);
     		jsonObject = JSONObject.fromObject(coverObj);
@@ -442,7 +486,7 @@ public class CommodityService {
     		commodityImgRepository.save(img);
     		
     	}
-    	
+    	//保存细节图
     	for(int i = 0;i<particularArray.size();i++){
     		Object coverObj = particularArray.get(i);
     		jsonObject = JSONObject.fromObject(coverObj);
@@ -477,19 +521,25 @@ public class CommodityService {
 				imgByte[i] += 256;
 			}
 		}
-		
+		//获取图片路径
 		File path = new File(imgUrl);
 		String url= "";
+		
+		//根据不同的类型，图片存放不同位置
 		if(type.indexOf(COVER) > -1){
 			url = COVER_PATH+COVER;
 		}else if(type.indexOf(DETAIL) >-1){
 			url = DETAIL_PATH+DETAIL;
 		}else if(type.indexOf(PARTICULAR) >-1){
 			url = PARTICULAR_PATH+PARTICULAR;
+		}else if(type.indexOf(HOME) > -1){
+			url = HOME_PATH+HOME;
 		}
+		//获取图片后缀
 		String extName = fileName.substring(fileName.lastIndexOf("."), fileName.length());
+		//图片名称
 		fileName = url  + "-" +UUID.randomUUID().toString().replace("-", "")+extName;
-		 String tempPath = path.getAbsolutePath() + fileName ;
+		String tempPath = path.getAbsolutePath() + fileName ;
 
 		try {
 			byte2File(imgByte, tempPath);
@@ -550,9 +600,12 @@ public class CommodityService {
 				url = DETAIL_PATH+DETAIL;
 			}else if(type.indexOf(PARTICULAR) >-1){
 				url = PARTICULAR_PATH+PARTICULAR;
+			}else if(type.indexOf(HOME) > -1){
+				url = HOME_PATH+HOME;
 			}
 			 String OriginalFilename[] = mfile.getOriginalFilename().split("\\.");
 			 String fileName = url  + "-" +UUID.randomUUID().toString().replace("-", "")+"."+OriginalFilename[1];
+			 System.out.println(fileName);
 			 String tempPath = path.getAbsolutePath() + fileName ;
 	         File tempFile = null;
 	      
@@ -577,13 +630,28 @@ public class CommodityService {
 	
 	/**
 	 * 删除图片
-	 * @param path 图片路径
-	 * 
+	 * @param path 图片名字
+	 * @param type 类型
 	 */
-	public void deleteImg(String ImgPath){
+	public void deleteImg(String imgPath,String type){
 		try{
-			File file = new File(imgUrl+ImgPath);
-			file.delete();
+			File path = new File(ResourceUtils.getURL("classpath:").getPath());
+			String url= "";
+			if(type.equals(COVER)){
+				url = COVER_PATH;
+			}else if(type.equals(DETAIL)){
+				url = DETAIL_PATH;
+			}else if(type.equals(PARTICULAR)){
+				url = PARTICULAR_PATH;
+			}else if(type.equals(HOME)){
+				url = HOME_PATH;
+			}
+			String imgs[] = imgPath.split(",");
+			for(String img : imgs ){
+				File file = new File(path+url,img);
+				file.delete();
+			}
+			
 		}catch(Exception e){
        	 LOG.error(e.getMessage(),e);
     		 try {
@@ -607,13 +675,9 @@ public class CommodityService {
     	}
     	
     	commodityRepository.delete(commodity);
-    	List<CommodityImg> list = commodityImgRepository.findByCommodityNum(commodity.getCommodityNum());
-    	commodityImgRepository.delete(list);
-    	
-    	
-    	for(CommodityImg c : list){
-    		deleteImg(c.getPath());
-    	}
+    	//删除首页推荐关系
+    	List<Recommend> list = recommendRepository.findByCommodityId(id);
+    	recommendRepository.delete(list);
     }
     
     

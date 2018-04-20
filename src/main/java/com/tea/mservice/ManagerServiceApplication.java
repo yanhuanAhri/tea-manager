@@ -3,6 +3,8 @@ package com.tea.mservice;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.context.annotation.Bean;
 
 import com.tea.mservice.core.filter.URLPermissionFilter;
@@ -19,19 +21,14 @@ public class ManagerServiceApplication {
 		return new URLPermissionFilter();
 	}
 	
-	/*@Bean
-	public HttpSessionStrategy cookieHttpSessionStrategy() {
-		CookieHttpSessionStrategy strategy = new CookieHttpSessionStrategy();
-		DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
-		cookieSerializer.setCookieName("MYSESSIONID");// cookies名称
-		cookieSerializer.setCookieMaxAge(1800);// 过期时间(秒)
-		strategy.setCookieSerializer(cookieSerializer);
-
-		return strategy;
-	}*/
-
-//	@Bean
-//	public static ConfigureRedisAction configureRedisAction() {
-//		return ConfigureRedisAction.NO_OP;
-//	}
+	 @Bean
+	 public EmbeddedServletContainerCustomizer containerCustomizer(){
+	        return new EmbeddedServletContainerCustomizer() {
+	            @Override
+	            public void customize(ConfigurableEmbeddedServletContainer container) {
+	                 container.setSessionTimeout(1800);//单位为秒
+	           }
+	     };
+	 }
+	
 }

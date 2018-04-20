@@ -27,6 +27,7 @@
 		$scope.coverlist = [];
 		$scope.detaillist = [];
 		$scope.particularlist = [];
+		$scope.homelist = [];
 		
 		
 		var getPageCallbackFun = function(type,obj){
@@ -36,7 +37,25 @@
 			initImageInput();
 			detailInput();
 			particularlInput();
+			initImageInputHome();
 		}, 300, 1);
+		
+		
+		var initImageInputHome = function() {
+			$("#input-dim-1-home").fileinput({
+				dropZoneTitle : "首頁图",
+				allowedFileExtensions : [ "jpg", "gif","png","jpeg" ],
+				maxFileCount : 1,
+				showRemove : true,
+				showUpload : false,
+				showCancel : false,
+				showClose : false,
+				maxFileSize : 5120,
+				msgFilesTooMany : "只能上传一张"
+			}).on("fileuploaded", function(event, outData, previewId, ids,$thumb) {
+			}).on("filesuccessremove", function(event, id, previewId, index) {
+			});
+		};
 		
 		var initImageInput = function() {
 			$("#input-dim-1").fileinput({
@@ -111,16 +130,17 @@
 		}
 		
 		var saveCallbackFun = function(){
-			
+			//保存成功清空数据
 	
 			$('#input-dim-1-detail').fileinput('clear');
 			$('#input-dim-1-particularl').fileinput('clear');
 			$('#input-dim-1').fileinput('clear');
-			//清空数据
+			$('#input-dim-1-home').fileinput('clear');
+			
 			$scope.coverlist = [];
 			$scope.detaillist = [];
 			$scope.particularlist = [];
-			
+			$scope.homelist = [];
 			$scope.tradeName = '';
 			$scope.teaName = '';
 			$scope.productType = '';
@@ -158,12 +178,16 @@
 			var productObj = new Object();
 			productObj['type'] = type;
 			
-			
+			//获取商品图片
 			var coverImg = $("#input-dim-1").parents(".file-input").find("img")[0];
+			var homeImg = $("#input-dim-1-home").parents(".file-input").find("img")[0];
 			var detailImg = $('#input-dim-1-detail').parents(".file-input").find("img");
 			var particularImg = $('#input-dim-1-particularl').parents(".file-input").find("img");
 			
-			
+			if(homeImg == null){
+				toastr["warning"]("请上首頁图");
+				return;
+			}
 			
 			
 			if(coverImg == null){
@@ -187,6 +211,12 @@
 			cover.name = coverImg.title;
 			$scope.coverlist.push(cover);
 			
+			var home = {};
+			home.path = homeImg.src;
+			home.name = homeImg.title;
+			$scope.homelist.push(home);
+			
+			
 			angular.forEach(detailImg, function(node,ind) {
     			var detail = {};
     			if(ind%2 == 0){
@@ -205,7 +235,7 @@
     			}
     		});
 			
-
+			productObj['home'] = $scope.homelist;
 			productObj['cover'] = $scope.coverlist;
 			productObj['detail'] = $scope.detaillist;
 			productObj['particular'] = $scope.particularlist;

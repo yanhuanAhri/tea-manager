@@ -49,15 +49,10 @@ import static java.util.stream.Collectors.*;
 public class CommonService {
 	private static final Logger LOG = LoggerFactory.getLogger(CommonService.class);
 
-	private String apigwHost;
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
 	private DepartmentRepository departmentRepository;
-	@Autowired
-	private DepartmentService departmentService;
-	@Autowired
-	private RestTemplate restTemplate;
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -92,45 +87,7 @@ public class CommonService {
 		return map;
 	}
 
-	public UploadResult upload(MultipartFile mfile, OSSUploadFileType type) throws Exception {
-		UserRealm.ShiroUser user = ShiroUserUtil.getUser();
-		File temp = new File(getNewName(mfile.getOriginalFilename()));
-		try (FileOutputStream fos = new FileOutputStream(temp);
-				BufferedOutputStream bos = new BufferedOutputStream(fos)) {
-
-			bos.write(mfile.getBytes());
-			bos.flush();
-
-			String md5 = FileMD5Compare.getFileMd5(temp);
-
-			Resource resource = new FileSystemResource(temp);
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-
-			map.add("file", resource);
-			map.add("filename", temp.getName());
-
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-			HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(map,
-					headers);
-
-			String url = apigwHost + "oss/files/{type}/{orgId}";
-			ResponseEntity<String> respEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class,
-					type, user.deptId);
-			LOG.info("upload=oss/files/{}/{}, file.size={}KB，file.name={}, respEntity={}", type, user.deptId, temp.length() / 1024, temp.getName(), respEntity.getBody());
-			return new UploadResult(respEntity.getBody(), md5);
-			// return restTemplate.postForObject(apigwHost + "oss/files/{type}/{orgId}",
-			// map, String.class, type, user.deptId);
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
-			throw e;
-		} finally {
-			if (temp.exists()) {
-				FileUtils.deleteQuietly(temp);
-			}
-		}
-	}
-
+	
 
 	private String getNewName(String filename) {
 		int index = filename.lastIndexOf(".");

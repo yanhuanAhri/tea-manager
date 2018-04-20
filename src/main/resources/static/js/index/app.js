@@ -644,7 +644,21 @@
                      sidebarMeta: {
                          order: 800
                      }
+                 },'RECOMMEND':{
+                     templateUrl: '/recommend.html',
+                     controller: 'RecommendController',
+                     controllerAs: 'recommendCtrl',
+                     resolve:{
+                         deps:['$stateParams', '$ocLazyLoad',function($stateParams, $ocLazyLoad) {
+                             return $ocLazyLoad.load('js/recommend/list.js');
+                         }]
+                     },
+                     sidebarMeta: {
+                         order: 800
+                     }
                  }
+		 	
+                 
 			 }
 		 });
 	}]);

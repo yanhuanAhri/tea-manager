@@ -48,7 +48,6 @@ public class UserInfoService {
     	try{	
     		
     		
-    		
 	    	//过滤条件
 	    	if(filter != null){
 	    		

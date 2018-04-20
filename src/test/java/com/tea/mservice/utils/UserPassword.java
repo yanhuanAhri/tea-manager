@@ -1,4 +1,4 @@
-package com.tea.mservice.utils;
+/*package com.tea.mservice.utils;
 
 import com.tea.mservice.core.util.Digests;
 import com.tea.mservice.core.util.Encodes;
@@ -17,3 +17,4 @@ public class UserPassword {
 	}
 
 }
+*/

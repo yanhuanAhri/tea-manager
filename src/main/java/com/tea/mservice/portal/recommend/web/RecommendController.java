@@ -1,4 +1,4 @@
-package com.tea.mservice.portal.userInfo.web;
+package com.tea.mservice.portal.recommend.web;
 
 import java.util.Map;
 
@@ -10,6 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.tea.mservice.manager.users.vo.UserVo;
 import com.tea.mservice.portal.commodity.service.CommodityService;
 import com.tea.mservice.portal.commodity.vo.CommodityVo;
+import com.tea.mservice.portal.recommend.service.RecommendService;
 import com.tea.mservice.portal.userInfo.service.UserInfoService;
 
 import net.sf.json.JSONObject;
@@ -25,42 +27,62 @@ import net.sf.json.JSONObject;
 
 
 /**
- * 用户模块
+ * 首页推荐
  * 
  *
  */
 @Configuration
 @Controller
-public class UserInfoController {
+public class RecommendController {
 
 	
 	@Autowired
-	private UserInfoService userInfoService;
+	private RecommendService recommendService;
 
-	@GetMapping(value = "userinfo.html")
+	@GetMapping(value = "recommend.html")
 	public String goList(ModelMap map) {
 		return getTemplatePath("list");
 	}
+	
+	
+	@GetMapping(value = "recommend/commodity.html")
+	public String goCommodity(ModelMap map) {
+		return getTemplatePath("commodity");
+	}
 
 	private String getTemplatePath(String fileName) {
-		return "/userinfo/" + fileName;
+		return "/recommend/" + fileName;
 	}
     
 	/**
-	 * 查詢
-	 * @param pageNumber 页数
-	 * @param pageSize 页码
-	 * @return 
+	 * 首页列表
+	 * @return
 	 */
-    @GetMapping("userInfo/list")
+    @GetMapping("recommend/list")
     @ResponseBody
-    public Map<String,Object> page(@RequestParam(required = false, defaultValue = "0") Integer pageNumber,
-      @RequestParam(required = false, defaultValue = "25") Integer pageSize,String filter) {
-    	return userInfoService.page(pageNumber, pageSize, filter);
+    public Map<String,Object> page() {
+    	return recommendService.page();
     }
 	
+    /**
+     * 保存
+     * @param param
+     */
+    @PostMapping("recommend")
+    @ResponseBody
+    public void save(@RequestBody String param){
+    	 recommendService.save(param);
+    }
     
-    
-
+	
+    /**
+     * 删除首页商品
+     * @param id
+     */
+    @DeleteMapping("recommend/{id}")
+    @ResponseBody
+    public void delete(@PathVariable("id") Long id) {
+    	recommendService.delete(id);
+    }
  
 }

@@ -11,11 +11,6 @@ import com.tea.mservice.manager.area.service.AreaService;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by liuyihao on 2017/10/12.
- *
- * 区域
- */
 @Controller
 @RequestMapping("/area")
 public class AreaController {

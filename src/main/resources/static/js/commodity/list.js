@@ -240,7 +240,7 @@
                     	 return '<div class="line-height-30 line-center">' +
                          '<a href="#/commodity/down" has-perm="COMMODITY_OPERATION" ng-if="row.entity.status == 1" ng-click="grid.appScope.openOperConfirmWin(row.entity.id,\'down\')" data-toggle="tooltip" data-placement="left" title="下架" class="btn btn-social-icon btn-xs btn-danger"><i class="fa fa-fw fa-arrow-down"></i></a>' +
                          '<a href="#/commodity/edit" has-perm="COMMODITY_EDIT" ng-if="row.entity.status != 1" ng-click="grid.appScope.openEditConfirmWin(row.entity.id)" data-toggle="tooltip" data-placement="left" title="编辑" class="btn btn-social-icon btn-xs btn-bitbucket"><i class="fa fa-fw fa-edit"></i></a>' +
-                         '<a href="#/commodity/up" has-perm="COMMODITY_OPERATION" ng-if="row.entity.status == 2 || row.entity.status == 0" ng-click="grid.appScope.openOperConfirmWin(row.entity.id,\'up\')" data-toggle="tooltip" data-placement="left" title="上架" class="btn btn-social-icon btn-xs btn-success"><i class="fa fa-fw  fa-arrow-up"></i></a>' +
+                         '<a href="#/commodity/up" has-perm="COMMODITY_OPERATION" ng-if="row.entity.status == 2 || row.entity.status == 3" ng-click="grid.appScope.openOperConfirmWin(row.entity.id,\'up\')" data-toggle="tooltip" data-placement="left" title="上架" class="btn btn-social-icon btn-xs btn-success"><i class="fa fa-fw  fa-arrow-up"></i></a>' +
                          '<a href="#/commodity/del" has-perm="COMMODITY_DEL" ng-if="row.entity.status != 1" ng-click="grid.appScope.openDelConfirmWin(row.entity.id,row.entity.commodityNum)" data-toggle="tooltip" data-placement="left" title="删除" class="btn btn-social-icon btn-xs btn-danger"><i class="fa fa-fw fa-remove"></i></a>' +
                          '</div>';
                     }
@@ -308,15 +308,17 @@
         var getFilter = function(grid) {
             var filter = {};
 
-            // 消息类型
+            // 商品编号
             var commodityNum = grid.columns[1].filters[0].term;
             if(commodityNum != '' && commodityNum != 'null' && commodityNum != undefined)
             	filter.commodityNum = commodityNum != '' ? commodityNum : '';
 
+            // 库存状态
             var repertoryStatus = grid.columns[12].filters[0].term;
             if(repertoryStatus != '' && repertoryStatus != 'null' && repertoryStatus != undefined)
             	filter.repertoryStatus = repertoryStatus != '' ? repertoryStatus : '';
             
+            // 商品状态
             var status = grid.columns[13].filters[0].term;
             if(status != '' && status != 'null' && status != undefined)
             	filter.status = status != '' ? status : '';
@@ -350,8 +352,10 @@
         $scope.openOperConfirmWin = function(id,type){
         	
         	utils.deletTip();
+        	//页数,
         	pageParams.pageNumber = $scope.gridOptions.paginationCurrentPage;
             pageParams.pageSize = $scope.gridOptions.paginationPageSize;
+            //数据
         	 $ctrl.items = [
                  {
                  },
@@ -369,7 +373,7 @@
 
         //详情编辑
         $scope.openEditConfirmWin = function(id){
-        	
+        	utils.deletTip();
        	 pageParams.pageNumber = $scope.gridOptions.paginationCurrentPage;
             pageParams.pageSize = $scope.gridOptions.paginationPageSize;
 
@@ -430,7 +434,7 @@
     }]);
 
     app.controller('CommodityEditController', ['$scope', '$uibModalInstance', 'items', 'CommodityService', function ($scope, $uibModalInstance, items, service) {
-    	
+    	//商品编辑
     	
     	
    	 var $ctrl = this;
@@ -443,6 +447,7 @@
          
          $scope.repertoryData = [{'id':1,'repertory':'有货'},{'id':2,'repertory':'缺货'}];
          
+         //商品数据回调
          var callbackFun = function(res){
        	  	 var obj = res.data;
         	 $scope.tradeName = obj.tradeName;
@@ -465,11 +470,13 @@
        	  	 $scope.marketPrice = obj.marketPrice;
        	  	 $scope.promotionPrice = obj.promotionPrice;
        	  	 
-       	  	 
+       	  	 //图片集合
        	  	var coverList = res.cover;
        	  	var detailList = res.detail;
        	    var particularList = res.particular;
+       	    var homeList = res.home;
        	  	 
+       	    //图片回显
        	  var img = new Image(); 
        	  	var path = coverList[0].path; 
        	  	img.src=path;
@@ -480,7 +487,7 @@
 				
 				$("#input-dim-1").fileinput({'showUpload':false, 'previewFileType':'any',
 					allowedFileExtensions: ["jpg", "png", "gif"],
-					initialPreview: ["<img id='brand-product-reshow-logo' class='file-preview-image' alt='"+imgName+"' title='"+imgName+"' style='width:auto;height:160px; margin-top: 0px;' src='"+path+"'/>"],
+					initialPreview: ["<img id='brand-product-reshow-logo' class='file-preview-image' alt='"+imgName+"' title='"+imgName+"' style='width:360px;height:160px; margin-top: 0px;' src='"+path+"'/>"],
 					initialPreviewConfig: [
 					{
 				        caption: imgName, 
@@ -499,7 +506,7 @@
 	                }],
 	                removeFromPreviewOnError: true});
 			}
-			
+			 //图片回显
 			 var img1 = new Image(); 
 			 img1.src=detailList[0].path;
 			 img1.onload = function (){ 
@@ -519,7 +526,7 @@
 					 configName.push(obj);
 					 
 					 
-					 var imgH = "<img id='brand-product-reshow-logo' class='file-preview-image' alt='"+imgName+"' title='"+imgName+"' style='width:auto;height:160px; margin-top: 0px;' src='"+p+"'/>";
+					 var imgH = "<img id='brand-product-reshow-logo' class='file-preview-image' alt='"+imgName+"' title='"+imgName+"' style='width:360px;height:160px; margin-top: 0px;' src='"+p+"'/>";
 					 imgHtml.push(imgH);
 					 
 				 });
@@ -543,6 +550,50 @@
 			
 			 }
 			 
+			 //图片回显
+			 var homeImg = new Image(); 
+			 homeImg.src=homeList[0].path;
+			 homeImg.onload = function (){ 
+			 
+				 var configName = [];
+				 var imgHtml = [];
+				 angular.forEach(homeList, function(node,ind) {
+					 var p =node.path;
+					 var imgName = p.split("/")[2];
+					 
+					 var obj = {};
+					 obj.width = '256';
+					 obj.url = '$urlD';
+					 obj.key=100;
+					 obj.extra = '{id；100}';
+					 obj.caption = imgName;
+					 configName.push(obj);
+					 
+					 
+					 var imgH = "<img id='brand-product-reshow-logo' class='file-preview-image' alt='"+imgName+"' title='"+imgName+"' style='width:360px;height:160px; margin-top: 0px;' src='"+p+"'/>";
+					 imgHtml.push(imgH);
+					 
+				 });
+				 
+				 	
+					
+				
+					$("#input-dim-1-home").fileinput({'showUpload':false, 'previewFileType':'any',
+						allowedFileExtensions: ["jpg", "png", "gif"],
+						initialPreview: imgHtml,
+						initialPreviewConfig: configName,
+					    showRemove: true,
+					    maxFileCount : 1,
+		                initialPreviewShowDelete: false,
+		                msgFilesTooMany : "只能上传1张",
+		                initialPreviewThumbTags: [{
+		                    '{CUSTOM_TAG_NEW}': ' ',    
+		                    '{CUSTOM_TAG_INIT}': 'lt;spanclass=\'custom-css\'>CUSTOM MARKUP;/span>'
+		                }],
+		                removeFromPreviewOnError: true});
+			
+			 }
+			 //图片回显
 			 var img2 = new Image(); 
 			 img2.src=particularList[0].path;
 			 img2.onload = function (){ 
@@ -562,7 +613,7 @@
 					 configName.push(obj);
 					 
 					 
-					 var imgH = "<img id='brand-product-reshow-logo' class='file-preview-image' alt='"+imgName+"' title='"+imgName+"' style='width:auto;height:160px; margin-top: 0px;' src='"+p+"'/>";
+					 var imgH = "<img id='brand-product-reshow-logo' class='file-preview-image' alt='"+imgName+"' title='"+imgName+"' style='width:360px;height:160px; margin-top: 0px;' src='"+p+"'/>";
 					 imgHtml.push(imgH);
 					 
 				 });
@@ -592,18 +643,23 @@
          $scope.coverlist = [];
          $scope.detaillist =[];
          $scope.particularlist =[];
+         $scope.homelist=[];
+         //保存商品
         $scope.release = function(type){
 			
 			var productObj = new Object();
 			productObj['type'] = type;
 			
-			
+			//获取图片
 			var coverImg = $("#input-dim-1").parents(".file-input").find("img")[0];
 			var detailImg = $('#input-dim-1-detail').parents(".file-input").find("img");
 			var particularImg = $('#input-dim-1-particularl').parents(".file-input").find("img");
+			var homeImg = $("#input-dim-1-home").parents(".file-input").find("img")[0];
 			
-			
-			
+			if(homeImg == null){
+				toastr["warning"]("请上传首页");
+				return;
+			}
 			
 			if(coverImg == null){
 				toastr["warning"]("请上传封面图");
@@ -626,6 +682,11 @@
 			cover.name = coverImg.title;
 			$scope.coverlist.push(cover);
 			
+			var home = {};
+			home.path = homeImg.src;
+			home.name = homeImg.title;
+			$scope.homelist.push(home);
+			
 			angular.forEach(detailImg, function(node,ind) {
     			var detail = {};
     			if(ind%2 == 0){
@@ -644,7 +705,7 @@
     			}
     		});
 			
-
+			productObj['home'] = $scope.homelist;
 			productObj['cover'] = $scope.coverlist;
 			productObj['detail'] = $scope.detaillist;
 			productObj['particular'] = $scope.particularlist;
@@ -706,7 +767,7 @@
 			}
 			
 			if($scope.promotionPrice < 0){
-				toastr["warning"]("动价格不能小于0");
+				toastr["warning"]("活动价格不能小于0");
 				return;
 			}
 			

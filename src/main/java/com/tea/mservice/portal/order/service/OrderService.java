@@ -1,6 +1,8 @@
 package com.tea.mservice.portal.order.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.tea.mservice.core.util.ShiroUserUtil;
+import com.tea.mservice.portal.entity.OrderLog;
+import com.tea.mservice.portal.order.repository.OrderLogRepository;
+
 import net.sf.json.JSONObject;
 
 @Service
@@ -20,8 +26,9 @@ public class OrderService {
     
     @Autowired
 	private JdbcTemplate jdbcTemplate;
-
-  
+    
+    @Autowired
+    private OrderLogRepository orderLogRepository;
   /**
    * 查询列表
    * @param pageNumber
@@ -110,6 +117,88 @@ public class OrderService {
 		return map;
     	
     }
+  
+  	/**
+  	 * 发货
+  	 * @param id
+  	 */
+  	public void deliveryn(Long id){
+  		try{
+  			
+  			
+  			String sql = "select status from `order` where id = ?";
+  			
+  			List<Map<String,Object>> list = jdbcTemplate.queryForList(sql, id);
+  			
+  			if(list.isEmpty()){
+  				return;
+  			}
+  			
+  			Integer status = Integer.parseInt(list.get(0).get("status").toString());
+  			
+  			//订单状态必须是2,待发货
+  			if(status != 2){
+  				return;
+  			}
+  			
+  			String update = "update `order` set status=3 where id =?";
+  			//更新状态
+  			jdbcTemplate.execute(update.replaceAll("\\?",id.toString()));
+  			
+  		}catch(Exception e){
+  			LOG.error(e.getMessage(),e);
+    		throw e;
+  		}
+  	}
     
+  	/**
+  	 * 退款
+  	 * @param vo
+  	 */
+  	public void openRefund(Long id,String param){
+  		try{
+	  		String sql = "select status,order_num as orderNum from `order` where id = ?";
+				
+			List<Map<String,Object>> list = jdbcTemplate.queryForList(sql, id);
+				
+			if(list.isEmpty()){
+					return;
+			}
+			JSONObject jsonObject=JSONObject.fromObject(param);
+			//商品编号
+			String orderNum = (String) list.get(0).get("orderNum");
+			//通过1 ，不通过0
+			int type = Integer.parseInt(jsonObject.getString("type"));
+			String remark = "";
+			int status = 10;
+			if(type == 0){
+				//获取不通过的理由
+				remark = jsonObject.getString("remark");
+				status = Integer.parseInt(list.get(0).get("status").toString());
+			}
+			
+			
+			//更新订单状态
+			String update = "update `order` set status=?1 where id =?2";
+				
+			jdbcTemplate.execute(update.replaceAll("\\?1",String.valueOf(status)).replaceAll("\\?2",id.toString()));
+			
+			//保存到订单日志
+			OrderLog log = new OrderLog();
+			log.setOrderId(id);
+			log.setOrderNum(orderNum);
+			log.setOrderStatus(status);
+			log.setRemark(remark);
+			log.setCreateUserId(ShiroUserUtil.getUser().id);
+			Timestamp date = new Timestamp(new Date().getTime());
+			log.setCreateTime(date);
+			
+			orderLogRepository.save(log);
+  		}catch(Exception e){
+  			LOG.error(e.getMessage(),e);
+    		throw e;
+  		}
+  	}
+  	
 
 }

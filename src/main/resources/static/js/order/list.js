@@ -119,7 +119,7 @@
                 },
                 {
                 	field: 'address',
-                	name: '收货地址',
+                	name: '收货方式',
                     minWidth: 180,
                 	enableSorting: false,
                 	enableFiltering: false
@@ -211,6 +211,20 @@
                         return '<div class="line-height-30 line-center">&nbsp;' +
                         '<span >{{row.entity.creatTime | date:\'yyyy-MM-dd hh:mm:ss\'}}</span>' +
                     '</div>';
+                    }
+                },
+                {
+                    field: 'action',
+                    name: '操作',
+                    cellClass: 'controller-btn-a',
+                    enableSorting: false,
+                    enableFiltering: false,
+                    width:100,
+                    cellTemplate: function () {
+                    	 return '<div class="line-height-30 line-center">' +
+                         '<a href="#/order/deliveryn" has-perm="ORDER_DELIVERYN"   ng-if="row.entity.status == 2" ng-click="grid.appScope.openDeliveryn(row.entity.id)" data-toggle="tooltip" data-placement="left" title="发货" class="btn btn-social-icon btn-xs btn-bitbucker"><i class="fa fa-fw fa-truck"></i></a>' +
+                         '<a href="#/order/refund"  has-perm="ORDER_REFUND" ng-if="row.entity.status == 5" ng-click="grid.appScope.openRefund(row.entity.id)" data-toggle="tooltip" data-placement="left" title="退款" class="btn btn-social-icon btn-xs btn-dange"><i class="fa fa-fw fa-edit"></i></a>' +
+                         '</div>';
                     }
                 }
             ],
@@ -321,14 +335,94 @@
             $scope.showOrHide = $scope.gridOptions.enableFiltering ? '隐藏过滤' : '显示过滤';
         }
 
+        //发货
+        $scope.openDeliveryn = function(id){
+        	
+        	 utils.deletTip();
 
+             pageParams.pageNumber = $scope.gridOptions.paginationCurrentPage;
+             pageParams.pageSize = $scope.gridOptions.paginationPageSize;
 
+             $ctrl.items = [
+                 {
+                 },
+                 pageParams,
+                 service.getPage,
+                 getPageCallbackFun
+             ];
 
+            Confirm({
+				  title:'确定发货?',
+		          msg: '是否要继续？',
+		          onOk: function(){
+		        	  service.deliveryn(id,$ctrl.items);
+		          },
+		          onCancel: function(){
+		        	  $.Deferred().reject();
+		          }
+		      })
+        	
+        }
+        
+        //退款
+        $scope.openRefund = function(id){
+        	
+        	
+        	 utils.deletTip();
 
+             pageParams.pageNumber = $scope.gridOptions.paginationCurrentPage;
+             pageParams.pageSize = $scope.gridOptions.paginationPageSize;
+        	
+             $ctrl.items = [
+                            {
+                            'id':id
+                            },
+                            pageParams,
+                            service.getPage,
+                            getPageCallbackFun
+             ];
+        	
+             
+
+ 			$modal.open({
+ 				animation: $ctrl.animationsEnabled,  
+ 				templateUrl: 'order/audit.html',
+ 				controller: 'OrderAuditController',
+ 				controllerAs: '$ctrl',
+ 				resolve: {
+ 			    	items: function () {
+ 			    		return $ctrl.items;
+ 			    	}
+ 			}});
+        }
     }]);
 
     
-
+    app.controller('OrderAuditController', [ '$scope', '$http', '$uibModal', '$interval', 'OrderService','$sce','items' ,'$uibModalInstance',function($scope, $http, $modal, $interval, service,$sce,items,$uibModalInstance) {
+    	
+    	var $ctrl = this;
+		
+		$scope.cancel = function() {
+			 $uibModalInstance.dismiss();
+		};
+    	
+		$scope.audit = function(type){
+			
+			if(type == 0 && ($scope.reason == '' || $scope.reason == undefined)){
+				toastr["warning"]("请输入不通过理由");
+				return;
+			}
+			
+			var param = {};
+			param.remark = $scope.reason;
+			param.type = type;
+			
+			service.openRefund(param,items,function(){
+				$uibModalInstance.dismiss();
+			});
+			
+		} 	
+    }]);
 
 
 
@@ -339,6 +433,7 @@
     */
     app.factory('OrderService', ['$http', function($http) {
         return {
+        	//查询列表
             getPage: function(pageParams, callbackFun) {
                 pageParams.pageNumber = (pageParams.pageNumber - 1);
 
@@ -350,6 +445,23 @@
                     } else{
                         throw new Error('未填写参数');
                     }
+                });
+            },
+            //发货
+            deliveryn:function(id,items){
+                $http.put('/order/deliveryn/'+id)
+                .success(function(response) {
+                	 toastr["success"]('发货成功');
+                	items[2](items[1], items[3]);
+                });
+            },
+            //退款
+            openRefund:function(param,items,closeFan){
+                $http.post('/order/refund/'+items[0].id,angular.toJson(param))
+                .success(function(response) {
+                	 toastr["success"]('提交成功');
+                	items[2](items[1], items[3]);
+                	closeFan();
                 });
             }
           
